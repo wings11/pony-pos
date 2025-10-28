@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>POS System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>POS System</h1>
+            <div class="header-buttons">
+                <button id="settings-btn" class="btn btn-secondary">Settings</button>
+                <button id="reports-btn" class="btn btn-secondary">Reports</button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Navigation Tabs -->
+            <nav class="tabs">
+                <button id="sale-tab" class="tab-btn active">Make Sale</button>
+                <button id="inventory-tab" class="tab-btn">Inventory</button>
+                <button id="add-product-tab" class="tab-btn">Add Product</button>
+            </nav>
+
+            <!-- Sale Tab -->
+            <div id="sale-content" class="tab-content active">
+                <div class="sale-interface">
+                    <div class="barcode-input-section">
+                        <label for="barcode-input">Scan or Enter Barcode:</label>
+                        <input type="text" id="barcode-input" class="barcode-input" placeholder="Scan barcode here..." autofocus>
+                        <button id="add-item-btn" class="btn btn-primary">Add Item</button>
+                    </div>
+
+                    <div class="cart-section">
+                        <h3>Current Sale</h3>
+                        <div id="cart-items" class="cart-items"></div>
+                        <div class="cart-total">
+                            <strong>Total: $<span id="cart-total">0.00</span></strong>
+                        </div>
+                        <div class="cart-actions">
+                            <button id="clear-cart-btn" class="btn btn-secondary">Clear Cart</button>
+                            <button id="complete-sale-btn" class="btn btn-primary btn-large">Complete Sale</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Inventory Tab -->
+            <div id="inventory-content" class="tab-content">
+                <div class="search-section">
+                    <input type="text" id="product-search" class="search-input" placeholder="Search products...">
+                    <button id="search-btn" class="btn btn-secondary">Search</button>
+                </div>
+                <div id="product-list" class="product-list"></div>
+            </div>
+
+            <!-- Add Product Tab -->
+            <div id="add-product-content" class="tab-content">
+                <form id="add-product-form" class="add-product-form">
+                    <div class="form-group">
+                        <label for="new-barcode">Barcode:</label>
+                        <input type="text" id="new-barcode" class="form-input" required>
+                        <button type="button" id="scan-new-barcode" class="btn btn-secondary">Scan</button>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-name">Product Name:</label>
+                        <input type="text" id="new-name" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-price">Price ($):</label>
+                        <input type="number" id="new-price" class="form-input" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="new-stock">Initial Stock:</label>
+                        <input type="number" id="new-stock" class="form-input" min="0" value="0" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-large">Add Product</button>
+                </form>
+            </div>
+        </main>
+
+        <!-- Footer Status -->
+        <footer class="footer">
+            <div class="status-bar">
+                <span id="printer-status">Printer: Not Connected</span>
+                <span id="database-status">Database: Connected</span>
+                <button id="test-printer-btn" class="btn btn-small">Test Printer</button>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modal for Sale Completion -->
+    <div id="sale-modal" class="modal">
+        <div class="modal-content">
+            <h2>Sale Completed</h2>
+            <p>Total: $<span id="modal-total">0.00</span></p>
+            <div class="modal-actions">
+                <button id="print-receipt-btn" class="btn btn-primary">Print Receipt</button>
+                <button id="close-modal-btn" class="btn btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
