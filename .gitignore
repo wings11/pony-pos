@@ -1,10 +1,12 @@
 node_modules/
 dist/
+release/
+build/
+*.db
 .env
 .DS_Store
 .vscode/
 PROJECT_DRAFT.md
 PROJECT_OUTLINE.md
 PROJECT_PROPOSAL.md
-
 .github/

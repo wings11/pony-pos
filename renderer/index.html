@@ -10,9 +10,15 @@
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <h1>POS System</h1>
+            <div class="brand">
+                <img src="logo.jpg" alt="Pony's logo" class="brand-logo">
+                <div class="brand-text">
+                    <h1>Pony's</h1>
+                    <span class="brand-tagline">Fashion Wardrobe</span>
+                </div>
+            </div>
             <div class="header-buttons">
-                <button id="settings-btn" class="btn btn-secondary">Settings</button>
+                <button id="close-btn" class="btn btn-secondary">Close</button>
                 <button id="reports-btn" class="btn btn-secondary">Reports</button>
             </div>
         </header>
@@ -24,6 +30,7 @@
                 <button id="sale-tab" class="tab-btn active">Make Sale</button>
                 <button id="inventory-tab" class="tab-btn">Inventory</button>
                 <button id="add-product-tab" class="tab-btn">Add Product</button>
+                <button id="history-tab" class="tab-btn">Sales History</button>
             </nav>
 
             <!-- Sale Tab -->
@@ -31,7 +38,8 @@
                 <div class="sale-interface">
                     <div class="barcode-input-section">
                         <label for="barcode-input">Scan or Enter Barcode:</label>
-                        <input type="text" id="barcode-input" class="barcode-input" placeholder="Scan barcode here..." autofocus>
+                        <input type="text" id="barcode-input" class="barcode-input" placeholder="Scan barcode here..." list="sale-barcode-suggestions" autocomplete="off" autofocus>
+                        <datalist id="sale-barcode-suggestions"></datalist>
                         <button id="add-item-btn" class="btn btn-primary">Add Item</button>
                     </div>
 
@@ -39,7 +47,7 @@
                         <h3>Current Sale</h3>
                         <div id="cart-items" class="cart-items"></div>
                         <div class="cart-total">
-                            <strong>Total: $<span id="cart-total">0.00</span></strong>
+                            <strong>Total: ฿<span id="cart-total">0.00</span></strong>
                         </div>
                         <div class="cart-actions">
                             <button id="clear-cart-btn" class="btn btn-secondary">Clear Cart</button>
@@ -63,23 +71,62 @@
                 <form id="add-product-form" class="add-product-form">
                     <div class="form-group">
                         <label for="new-barcode">Barcode:</label>
-                        <input type="text" id="new-barcode" class="form-input" required>
-                        <button type="button" id="scan-new-barcode" class="btn btn-secondary">Scan</button>
+                        <div class="input-with-button">
+                            <input type="text" id="new-barcode" class="form-input" required>
+                            <button type="button" id="scan-new-barcode" class="btn btn-secondary">Scan</button>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="new-name">Product Name:</label>
                         <input type="text" id="new-name" class="form-input" required>
                     </div>
-                    <div class="form-group">
-                        <label for="new-price">Price ($):</label>
-                        <input type="number" id="new-price" class="form-input" step="0.01" min="0" required>
+                    <div class="form-row">
+                        <div class="form-group" id="original-price-group">
+                            <label for="new-original-price">Original Price / Cost (฿):</label>
+                            <input type="number" id="new-original-price" class="form-input" step="0.01" min="0" value="0">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-price">Selling Price (฿):</label>
+                            <input type="number" id="new-price" class="form-input" step="0.01" min="0" required>
+                        </div>
                     </div>
                     <div class="form-group">
-                        <label for="new-stock">Initial Stock:</label>
-                        <input type="number" id="new-stock" class="form-input" min="0" value="0" required>
+                        <label>Sizes &amp; Stock <span class="label-hint">(leave size empty if the product has no sizes)</span>:</label>
+                        <datalist id="size-suggestions"></datalist>
+                        <div id="size-rows"></div>
+                        <button type="button" id="add-size-row-btn" class="btn btn-secondary btn-xs">+ Add another size</button>
                     </div>
                     <button type="submit" class="btn btn-primary btn-large">Add Product</button>
                 </form>
+            </div>
+
+            <!-- Sales History Tab -->
+            <div id="history-content" class="tab-content">
+                <div class="history-filters">
+                    <button id="history-filter-today" class="btn btn-secondary btn-small">Today</button>
+                    <button id="history-filter-7days" class="btn btn-secondary btn-small">Last 7 Days</button>
+                    <button id="history-filter-30days" class="btn btn-secondary btn-small">Last 30 Days</button>
+                    <button id="history-filter-all" class="btn btn-secondary btn-small">All</button>
+                    <label for="history-start-date">From</label>
+                    <input type="date" id="history-start-date" class="history-date-input">
+                    <label for="history-end-date">To</label>
+                    <input type="date" id="history-end-date" class="history-date-input">
+                    <button id="apply-history-range-btn" class="btn btn-secondary btn-small">Apply Range</button>
+                </div>
+                <div id="history-summary" class="history-summary"></div>
+                <div id="history-list" class="history-list"></div>
+                <div class="history-actions history-actions-sticky">
+                    <button id="refresh-history-btn" class="btn btn-secondary">Refresh</button>
+                    <button id="export-history-xls-btn" class="btn btn-secondary">Export Excel</button>
+                    <button id="view-history-visualization-btn" class="btn btn-primary">View Visualization</button>
+                </div>
+                <div id="history-visualization" class="history-visualization">
+                    <div class="history-visualization-header">
+                        <h3>Sales Visualization</h3>
+                        <button id="close-history-visualization-btn" class="btn btn-secondary btn-small">Close</button>
+                    </div>
+                    <canvas id="history-chart-canvas"></canvas>
+                </div>
             </div>
         </main>
 
@@ -97,13 +144,54 @@
     <div id="sale-modal" class="modal">
         <div class="modal-content">
             <h2>Sale Completed</h2>
-            <p>Total: $<span id="modal-total">0.00</span></p>
+            <p>Total: ฿<span id="modal-total">0.00</span></p>
             <div class="modal-actions">
                 <button id="print-receipt-btn" class="btn btn-primary">Print Receipt</button>
                 <button id="close-modal-btn" class="btn btn-secondary">Close</button>
             </div>
         </div>
     </div>
+
+    <!-- Modal for Stock Update -->
+    <div id="stock-modal" class="modal">
+        <div class="modal-content">
+            <h2>Update Stock</h2>
+            <div id="stock-modal-product" class="stock-modal-product">Barcode:</div>
+            <input type="number" id="stock-modal-input" class="stock-modal-input" min="0" step="1" inputmode="numeric">
+            <div class="modal-actions">
+                <button id="stock-save-btn" class="btn btn-primary">Save</button>
+                <button id="stock-cancel-btn" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Size Selection at sale time -->
+    <div id="size-select-modal" class="modal">
+        <div class="modal-content">
+            <h2>Select Size</h2>
+            <div id="size-select-product" class="stock-modal-product"></div>
+            <div id="size-select-options" class="size-select-options"></div>
+            <div class="modal-actions">
+                <button id="size-select-cancel-btn" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for Item Return -->
+    <div id="return-modal" class="modal">
+        <div class="modal-content">
+            <h2>Return Item</h2>
+            <div id="return-modal-product" class="stock-modal-product"></div>
+            <input type="number" id="return-modal-input" class="stock-modal-input" min="1" step="1" inputmode="numeric">
+            <div class="modal-actions">
+                <button id="return-save-btn" class="btn btn-primary">Confirm Return</button>
+                <button id="return-cancel-btn" class="btn btn-secondary">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
 
     <script src="app.js"></script>
 </body>

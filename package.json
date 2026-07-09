@@ -7,20 +7,62 @@
     "start": "electron dist/main.js",
     "dev": "npm run build && npm start",
     "build": "tsc",
+    "make:icons": "node scripts/generate-icons.js",
+    "pack:win": "npm run make:icons && npm run build && electron-builder --win nsis",
     "watch": "tsc --watch",
     "clean": "rimraf dist"
   },
-  "keywords": ["pos", "electron", "typescript", "barcode", "inventory"],
+  "keywords": [
+    "pos",
+    "electron",
+    "typescript",
+    "barcode",
+    "inventory"
+  ],
   "author": "Wings",
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^20.0.0",
     "electron": "^27.0.0",
+    "electron-builder": "^24.13.3",
+    "png-to-ico": "^2.1.8",
     "rimraf": "^5.0.0",
     "typescript": "^5.0.0"
   },
   "dependencies": {
-    "sqlite3": "^5.1.6",
-    "node-thermal-printer": "^4.4.0"
+    "exceljs": "^4.4.0",
+    "node-thermal-printer": "^4.4.0",
+    "sharp": "^0.34.5",
+    "sqlite3": "^5.1.6"
+  },
+  "build": {
+    "appId": "com.pony.pos",
+    "productName": "Pony POS",
+    "npmRebuild": false,
+    "asar": false,
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "renderer/**/*",
+      "build/**/*",
+      "package.json",
+      "!node_modules/printer/**"
+    ],
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "build/icon.ico",
+      "signAndEditExecutable": true
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Pony POS"
+    }
   }
 }
